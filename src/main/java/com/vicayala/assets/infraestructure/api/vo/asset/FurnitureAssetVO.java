@@ -1,4 +1,4 @@
-package com.vicayala.assets.domain.dtos.asset;
+package com.vicayala.assets.infraestructure.api.vo.asset;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -16,12 +16,12 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Getter
 @Setter
-@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = FixedFurnAssetDTO.class, name = FixedFurnAssetDTO.TYPE),
-    @JsonSubTypes.Type(value = MaintenanceFurnAssetDTO.class, name = MaintenanceFurnAssetDTO.TYPE)
+    @JsonSubTypes.Type(value = FixedFurnAssetVO.class, name = FixedFurnAssetVO.TYPE),
+    @JsonSubTypes.Type(value = MaintenanceFurnAssetVO.class, name = MaintenanceFurnAssetVO.TYPE)
 })
-public abstract class FurnitureAssetDTO extends AssetDTO{
+public abstract class FurnitureAssetVO extends AssetVO {
 
     private String manufacturer;
     private String location;

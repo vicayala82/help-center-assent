@@ -2,13 +2,11 @@ package com.vicayala.assets.domain.dtos.responsible;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+@Data
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
-@NoArgsConstructor
-@Data
 public abstract class EmployeeResponsibleDTO extends ResponsibleDTO{
 
     private String fullName;

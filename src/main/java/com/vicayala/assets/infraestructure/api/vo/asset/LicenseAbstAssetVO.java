@@ -1,10 +1,10 @@
-package com.vicayala.assets.domain.dtos.asset;
+package com.vicayala.assets.infraestructure.api.vo.asset;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.vicayala.assets.application.shared.enums.LicenseStatusEnum;
-import com.vicayala.assets.infraestructure.api.vo.asset.LicenseAbstAssetVO;
-import com.vicayala.assets.infraestructure.db.entities.asset.AssetsItemEntity;
+import com.vicayala.assets.domain.dtos.asset.LicenseAbstAssetDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +17,8 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @Slf4j
-public class LicenseAbstAssetDTO extends AbstractAssetDTO{
+@JsonTypeName(LicenseAbstAssetVO.TYPE)
+public class LicenseAbstAssetVO extends AbstractAssetVO {
 
     @JsonIgnore
     public static final String TYPE = "license_abstract";
@@ -38,17 +39,10 @@ public class LicenseAbstAssetDTO extends AbstractAssetDTO{
         }
     }
 
-    public static AssetsItemEntity toEntity(LicenseAbstAssetDTO licenseAbstAssetDTO){
-        AssetsItemEntity assetsItemEntity = AssetsItemEntity.builder().build();
-        BeanUtils.copyProperties(licenseAbstAssetDTO, assetsItemEntity);
-        assetsItemEntity.setAssetType(LicenseAbstAssetDTO.TYPE);
-        return assetsItemEntity;
-    }
-
-    public static LicenseAbstAssetVO toVO(LicenseAbstAssetDTO licenseAbstAssetDTO){
-        LicenseAbstAssetVO licenseAbstAssetVO = LicenseAbstAssetVO.builder().build();
-        BeanUtils.copyProperties(licenseAbstAssetDTO, licenseAbstAssetVO);
-        return licenseAbstAssetVO;
+    public static LicenseAbstAssetDTO toDTO(LicenseAbstAssetVO licenseAbstAssetVO){
+        LicenseAbstAssetDTO licenseAbstAssetDTO = LicenseAbstAssetDTO.builder().build();
+        BeanUtils.copyProperties(licenseAbstAssetVO, licenseAbstAssetDTO);
+        return licenseAbstAssetDTO;
     }
 
 }

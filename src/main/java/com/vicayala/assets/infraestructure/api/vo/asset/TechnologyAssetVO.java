@@ -1,7 +1,8 @@
-package com.vicayala.assets.domain.dtos.asset;
+package com.vicayala.assets.infraestructure.api.vo.asset;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.vicayala.assets.application.shared.enums.TechnologyStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,11 +15,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @SuperBuilder(toBuilder = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ComputerTechAssetDTO.class, name = ComputerTechAssetDTO.TYPE),
-        @JsonSubTypes.Type(value = ScreenTechAssetDTO.class, name = ScreenTechAssetDTO.TYPE)
+        @JsonSubTypes.Type(value = ComputerTechAssetVO.class, name = ComputerTechAssetVO.TYPE),
+        @JsonSubTypes.Type(value = ScreenTechAssetVO.class, name = ScreenTechAssetVO.TYPE)
 })
-public abstract class TechnologyAssetDTO extends AssetDTO {
+public abstract class TechnologyAssetVO extends AssetVO {
 
     private String brand;
     private String location;
