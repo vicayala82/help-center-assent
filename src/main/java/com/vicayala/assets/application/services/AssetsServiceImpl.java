@@ -3,7 +3,6 @@ package com.vicayala.assets.application.services;
 import com.vicayala.assets.application.repositories.AssetRepository;
 import com.vicayala.assets.application.services.interfaces.IAssetsService;
 import com.vicayala.assets.domain.dtos.asset.AssetDTO;
-import com.vicayala.assets.infraestructure.api.vo.asset.AssetVO;
 import com.vicayala.assets.infraestructure.db.entities.asset.AssetsItemEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,46 +11,39 @@ import reactor.core.publisher.Mono;
 
 @Service
 @AllArgsConstructor
-public class AssetsServiceImpl implements IAssetsService<AssetVO, String> {
+public class AssetsServiceImpl implements IAssetsService<AssetDTO, String> {
 
     private final AssetRepository assetRepository;
 
     @Override
-    public Flux<AssetVO> getAll() {
+    public Flux<AssetDTO> getAll() {
         return assetRepository.findAll()
-                .map(AssetsItemEntity::toDTO)
-                .map(AssetDTO::toVO);
+                .map(AssetsItemEntity::toDTO);
     }
 
     @Override
-    public Mono<AssetVO> getById(String id) {
+    public Mono<AssetDTO> getById(String id) {
         return assetRepository.findById(id)
-                .map(AssetsItemEntity::toDTO)
-                .map(AssetDTO::toVO);
+                .map(AssetsItemEntity::toDTO);
     }
 
     @Override
-    public Mono<AssetVO> create(AssetVO assetVO) {
-        var assetDTO = AssetVO.toDTO(assetVO);
+    public Mono<AssetDTO> create(AssetDTO assetDTO) {
         return assetRepository.save(AssetDTO.ConvertToItemEntity(assetDTO))
-                .map(AssetsItemEntity::toDTO)
-                .map(AssetDTO::toVO);
+                .map(AssetsItemEntity::toDTO);
     }
 
     @Override
-    public Mono<AssetVO> update(AssetVO assetVO, String id) {
-        var assetDTO = AssetVO.toDTO(assetVO);
+    public Mono<AssetDTO> update(AssetDTO assetDTO, String id) {
         assetDTO.setId(id);
         return assetRepository.update(AssetDTO.ConvertToItemEntity(assetDTO))
-                .map(AssetsItemEntity::toDTO)
-                .map(AssetDTO::toVO);
+                .map(AssetsItemEntity::toDTO);
     }
 
     @Override
-    public Mono<AssetVO> delete(String id) {
+    public Mono<AssetDTO> delete(String id) {
         return assetRepository.delete(id)
-                .map(AssetsItemEntity::toDTO)
-                .map(AssetDTO::toVO);
+                .map(AssetsItemEntity::toDTO);
     }
 
 

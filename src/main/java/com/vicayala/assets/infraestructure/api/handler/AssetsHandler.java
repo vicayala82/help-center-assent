@@ -1,6 +1,7 @@
 package com.vicayala.assets.infraestructure.api.handler;
 
 import com.vicayala.assets.application.services.AssetsServiceImpl;
+import com.vicayala.assets.domain.dtos.asset.AssetDTO;
 import com.vicayala.assets.infraestructure.api.vo.asset.AssetVO;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -20,12 +21,15 @@ public class AssetsHandler {
     private final AssetsServiceImpl assetsService;
     public Mono<ServerResponse> listAll(ServerRequest request){
         return ServerResponse.ok()
-                .body(assetsService.getAll(), AssetVO.class);
+                .body(assetsService.getAll()
+                        .map(AssetDTO::toVO),
+                        AssetVO.class);
     }
 
     public Mono<ServerResponse> getById(ServerRequest request){
         String id = request.pathVariable("id");
         return assetsService.getById(id)
+                .map(AssetDTO::toVO)
                 .flatMap(assetVO -> ServerResponse.ok()
                 .body(fromValue(assetVO)))
                 .switchIfEmpty(ServerResponse.notFound().build());
@@ -33,31 +37,35 @@ public class AssetsHandler {
 
     public Mono<ServerResponse> delete(ServerRequest request){
         String id = request.pathVariable("id");
-        Mono<AssetVO> assetInDb = assetsService.getById(id);
+        Mono<AssetVO> assetInDb = assetsService.getById(id).map(AssetDTO::toVO);
 
         return assetInDb.flatMap(assetVO -> ServerResponse.ok()
-                    .body(assetsService.delete(id), AssetVO.class))
+                    .body(assetsService.delete(id).map(AssetDTO::toVO), AssetVO.class))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
     public Mono<ServerResponse> create(ServerRequest request){
-        Mono<AssetVO> assetVO = request.bodyToMono(AssetVO.class);
-        return assetVO.flatMap(assetsService::create)
-                .flatMap(assetResponse -> ServerResponse.created(URI.create("/v2/assets/"+assetResponse.getId()))
+        Mono<AssetDTO> assetDTO = request.bodyToMono(AssetVO.class)
+                .map(AssetVO::toDTO);
+        return assetDTO.flatMap(assetsService::create).map(AssetDTO::toVO)
+                .flatMap(assetResponse -> ServerResponse
+                        .created(URI.create("/v2/assets/"+assetResponse.getId()))
                     .body(fromValue(assetResponse)));
     }
 
     public Mono<ServerResponse> update(ServerRequest request){
-        Mono<AssetVO> assetRequestVO = request.bodyToMono(AssetVO.class);
+        Mono<AssetDTO> assetRequestDTO = request.bodyToMono(AssetVO.class)
+                .map(AssetVO::toDTO);
         String id = request.pathVariable("id");
-        Mono<AssetVO> assetInDb = assetsService.getById(id);
+        Mono<AssetDTO> assetInDb = assetsService.getById(id);
 
-        return assetInDb.zipWith(assetRequestVO, (db, req) ->{
+        return assetInDb.zipWith(assetRequestDTO, (db, req) ->{
                 BeanUtils.copyProperties(req,db);
                 db.setId(req.getId());
                 return db;
             }).flatMap(assetToPersist -> ServerResponse.ok()
-                .body(assetsService.update(assetToPersist, id), AssetVO.class))
+                .body(assetsService.update(assetToPersist, id).map(AssetDTO::toVO),
+                        AssetVO.class))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 }

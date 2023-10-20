@@ -1,6 +1,8 @@
 package com.vicayala.assets.infraestructure.api.vo.asset;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -18,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Data
 @SuperBuilder(toBuilder = true)
@@ -35,6 +38,9 @@ import java.time.LocalDate;
 public abstract class AssetVO {
 
     private String id;
+    @JsonProperty("responsible")
+    private ResponsibleVO responsible;
+    @JsonIgnore
     @JsonProperty("responsible_id")
     private String responsibleId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -57,6 +63,9 @@ public abstract class AssetVO {
             default -> throw new RuntimeException();
         }
         BeanUtils.copyProperties(assetVO, assetDTO);
+        if(Objects.nonNull(assetVO.getResponsible())){
+            assetDTO.setResponsibleId(assetVO.getResponsibleId());
+        }
         return assetDTO;
     }
 
