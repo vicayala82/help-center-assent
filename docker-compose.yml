@@ -1,19 +1,36 @@
-version: '3'
-services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: pragma
-      MONGO_INITDB_ROOT_PASSWORD: pragmamongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./data:/data/db
-      - ./data/assets:/data/db/assets
-      - ./data/responsables:/data/db/responsables
-    networks:
-      - mongodb_network
 
+services:
+ responsible-app:
+   build: ../responsible
+   image: responsible-image
+   restart: on-failure:2
+   environment:
+     DYNAMODB_ENDPOINT: https://dynamodb.us-east-1.amazonaws.com
+     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+     AWS_REGION: us-east-1
+     SPRING_PROFILES_ACTIVE: docker
+   ports:
+     - "8079:8079"
+   networks:
+     - help_center_network
+ assets-app:
+   build: ../assets
+   image: assets-image
+   restart: on-failure:2
+   depends_on:
+    - responsible-app
+   environment:
+     DYNAMODB_ENDPOINT: https://dynamodb.us-east-1.amazonaws.com
+     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+     AWS_REGION: us-east-1
+     RESPONSIBLE_URL: http://responsible-app:8079/responsible/
+     SPRING_PROFILES_ACTIVE: docker
+   ports:
+     - "8080:8080"
+   networks:
+     - help_center_network
 networks:
-  mongodb_network:
+  help_center_network:
+    name: help_center_network
