@@ -29,6 +29,7 @@ public class ResponsibleServiceImpl implements IResponsibleService {
     public ResponsibleDTO getById(String id) {
         this.mapper.registerModule(new JavaTimeModule());
         String url = getByIdUrl+id;
+        log.info("Responsible Service : "+ url);
         try {
             ResponseEntity<ResponsibleDTO> responsibleDTO =
                     restTemplate.getForEntity(url,ResponsibleDTO.class);
@@ -36,6 +37,7 @@ public class ResponsibleServiceImpl implements IResponsibleService {
             return responsibleDTO.getBody();
         }catch (Exception e){
             log.error(e.getMessage());
+            e.printStackTrace();
             throw new ResponsibleServiceException();
         }
     }

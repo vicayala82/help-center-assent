@@ -1,6 +1,8 @@
 package com.vicayala.assets.infraestructure.api.configuration;
 
 import com.vicayala.assets.infraestructure.api.handler.AssetsHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -13,8 +15,8 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
+@Slf4j
 public class RouterFunctionConfig {
-
     static final String API_ROUTE_URL= "/v2/assets";
     static final String PATH_ID= "/{id}";
     @Bean
