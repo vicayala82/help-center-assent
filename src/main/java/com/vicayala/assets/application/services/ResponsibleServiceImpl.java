@@ -8,6 +8,7 @@ import com.vicayala.assets.domain.dtos.responsible.ResponsibleDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,13 +19,10 @@ import org.springframework.web.client.RestTemplate;
 @Data
 public class ResponsibleServiceImpl implements IResponsibleService {
 
-    private String getByIdUrl;
     private RestTemplate restTemplate = new RestTemplate();
     private ObjectMapper mapper = new ObjectMapper();
-
-    public ResponsibleServiceImpl(String url){
-        this.getByIdUrl = url;
-    }
+    @Value("${responsible.url}")
+    private String getByIdUrl;
     @Override
     public ResponsibleDTO getById(String id) {
         this.mapper.registerModule(new JavaTimeModule());
@@ -41,4 +39,5 @@ public class ResponsibleServiceImpl implements IResponsibleService {
             throw new ResponsibleServiceException();
         }
     }
+
 }

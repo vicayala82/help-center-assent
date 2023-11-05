@@ -62,10 +62,6 @@ public abstract class AssetDTO {
             default -> throw new RuntimeException();
         }
         BeanUtils.copyProperties(assetDTO, assetVO);
-        if(StringUtils.isNotEmpty(assetDTO.getResponsibleId())){
-            assetVO.setResponsible(ResponsibleHandler
-                .createResponsibleVO(assetDTO.getResponsibleId()));
-        }
         return assetVO;
     }
 
