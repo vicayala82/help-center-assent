@@ -3,6 +3,7 @@ package com.vicayala.assets.application.services;
 import com.vicayala.assets.application.repositories.AssetRepository;
 import com.vicayala.assets.application.services.interfaces.IAssetsService;
 import com.vicayala.assets.domain.dtos.asset.AssetDTO;
+import com.vicayala.assets.domain.dtos.responsible.ResponsibleDTO;
 import com.vicayala.assets.infraestructure.db.entities.asset.AssetsItemEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

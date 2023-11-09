@@ -16,7 +16,7 @@ import java.net.URI;
 @Slf4j
 
 @Configuration
-public class DynamoDbConfig {
+public class DynamoDbConfiguration {
     @Value("${amazon.aws.accesskey}")
     private String amazonAWSAccessKey;
     @Value("${amazon.aws.secretkey}")

@@ -3,27 +3,48 @@ package com.vicayala.assets.infraestructure.api.handler;
 import com.vicayala.assets.application.services.AssetsServiceImpl;
 import com.vicayala.assets.domain.dtos.asset.AssetDTO;
 import com.vicayala.assets.infraestructure.api.vo.asset.AssetVO;
+import com.vicayala.assets.infraestructure.api.vo.asset.ResponsibleVO;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.Objects;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class AssetsHandler {
 
     private final AssetsServiceImpl assetsService;
+    private final ResponsibleHandler responsibleHandler;
     public Mono<ServerResponse> listAll(ServerRequest request){
+        Flux<AssetVO> assetVOFlux = assetsService.getAll().map(AssetDTO::toVO);
+        Flux<ResponsibleVO> responsibleVOFlux = assetVOFlux.map(assetVO -> {
+            if(Objects.nonNull(assetVO.getResponsibleId())){
+                return responsibleHandler.createResponsibleVO(assetVO.getResponsibleId());
+            }
+            return ResponsibleVO.builder().build();
+        });
+        Flux<AssetVO> responseAssets = assetVOFlux.zipWith(responsibleVOFlux,
+                (assetVO, responsibleVO) ->{
+                    if(Objects.nonNull(assetVO.getResponsibleId()) &&
+                            Objects.nonNull(responsibleVO) &&
+                            assetVO.getResponsibleId().equals(responsibleVO.getId())){
+                        assetVO.setResponsible(responsibleVO);
+                        return assetVO;
+                    }
+                    return assetVO;
+                });
         return ServerResponse.ok()
-                .body(assetsService.getAll()
-                        .map(AssetDTO::toVO),
-                        AssetVO.class);
+                .body(responseAssets,AssetVO.class);
     }
 
     public Mono<ServerResponse> getById(ServerRequest request){
